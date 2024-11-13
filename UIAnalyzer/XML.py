@@ -2,7 +2,7 @@ import os
 import xml.etree.ElementTree as ET
 from lxml import etree
 from typing import List, Union, Dict
-from anytree import Node, RenderTree
+from anytree import Node
 
 from .Driver import Driver
 from .Utils import RED, END
@@ -45,11 +45,7 @@ class XML:
         bounds = bounds.split("][")
         bounds = eval("[" + bounds[0] + "],[" + bounds[1] + "]")
         rect = [int(bounds[0][0]), int(bounds[0][1]), int(bounds[1][0]), int(bounds[1][1])]
-
-        if rect[2] < rect[0] or rect[3] < rect[1]:
-            return []
-        else:
-            return rect
+        return rect
 
     @staticmethod
     def build_tree(root: ET.Element) -> Node:
@@ -99,7 +95,7 @@ class XML:
                     content_desc.append(descendant.xml_node.attrib['content-desc'])
                 if descendant.xml_node.attrib['resource-id']:
                     resource_id.append(descendant.xml_node.attrib['resource-id'])
-                descendant_bounds = self.__parse_bounds(descendant.xml_node.attrib['bounds'])
+                # descendant_bounds = self.__parse_bounds(descendant.xml_node.attrib['bounds'])
                 # if descendant_bounds:
                 #     bounds = [min(bounds[0], descendant_bounds[0]), min(bounds[1], descendant_bounds[1]), max(bounds[2], descendant_bounds[2]), max(bounds[3], descendant_bounds[3])]
 
@@ -157,10 +153,3 @@ class XML:
 
         with open(self.xml_save_path, 'wb') as file:
             file.write(formatted_xml)
-
-
-if __name__ == "__main__":
-    xml = XML("Example/dom_tree.xml", driver=Driver())
-    nodes = xml.group_interactive_nodes()
-    for n in nodes:
-        print(n)

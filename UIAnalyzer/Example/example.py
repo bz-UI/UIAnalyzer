@@ -17,4 +17,4 @@ for UI_element in UI_elements.items():
     print(UI_element)
 
 # 3. 绘制网格
-grid_path, grids = PageCognition.grid(img_path)
+# grid_path, grids = PageCognition.grid(img_path)
