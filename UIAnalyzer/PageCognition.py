@@ -19,24 +19,14 @@ font_path = os.path.join(script_dir, "Assets", "Arial.ttf")
 
 class PageCognition:
     @staticmethod
-    def draw_SoM(img_path: str = None, xml_path: str = None) -> Tuple[str, Dict]:
-        assert((img_path is None and xml_path is None) or (img_path is not None and xml_path is not None)), "img_path and xml_path must be provided together"
+    def draw_SoM(img_path: str) -> Tuple[str, Dict]:
+        if not os.path.exists(img_path):
+            Driver.screenshot(img_path)
 
-        if img_path is None and xml_path is None:
-            current_script_path = os.path.abspath(__file__)
-            project_root = os.path.dirname(current_script_path)
-            log_path = os.path.join(project_root, "../UIAnalyzer_logs")
-            os.makedirs(log_path, exist_ok=True)
-            current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
-            img_path = os.path.join(log_path, f"{current_time}.png")
-            xml_path = os.path.join(log_path, f"{current_time}.xml")
-
-            driver = Driver()
-            driver.screenshot(img_path)
-            driver.get_xml(xml_path)
-
+        xml_path = os.path.splitext(img_path)[0] + ".xml"
         xml = XML(xml_path)
         rects = xml.group_interactive_nodes()
+
         return PageCognition.__draw_rects(img_path, rects, "SoM")
 
     @staticmethod
@@ -45,9 +35,11 @@ class PageCognition:
         # 网格的行数和列数，经验值，可以进行配置
         rows = 12
         cols = 8
-
         # form the rects
         rects = []
+
+        if not os.path.exists(img_path):
+            Driver.screenshot(img_path)
         image = cv2.imread(img_path)
         height, width, _ = image.shape
 

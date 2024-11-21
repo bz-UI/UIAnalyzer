@@ -8,7 +8,7 @@ def parse_requirements(filename):
 
 setup(
     name="UIAnalyzer",
-    version="0.1.2",
+    version="0.2.0",
     author="TSKGHS17",
     author_email="23210240317@m.fudan.edu.cn",
     long_description=open("README.md").read(),
@@ -19,11 +19,11 @@ setup(
     package_data={
         '': ['Assets/*.ttf'],
     },
-    license="MIT",
+    license="GPL-3.0-or-later",
     license_files=('LICENSE',),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',

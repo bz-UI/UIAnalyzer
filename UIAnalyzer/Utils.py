@@ -68,3 +68,36 @@ def get_inverse_color(avg_color: Tuple[int, int, int]) -> Tuple[int, int, int]:
     """获得反色"""
     inverse_color = (255 - avg_color[0], 255 - avg_color[1], 255 - avg_color[2])
     return inverse_color
+
+
+def get_line_average_color(image_path: str, start_point: List, end_point: List) -> Tuple[int, int, int]:
+    """获得线段的平均颜色"""
+    image = Image.open(image_path)
+    pixels = image.load()
+    r, g, b = 0, 0, 0
+    count = 0
+
+    x1, y1 = start_point
+    x2, y2 = end_point
+
+    if x1 == x2:
+        for y in range(min(y1, y2), max(y1, y2)):
+            r += pixels[x1, y][0]
+            g += pixels[x1, y][1]
+            b += pixels[x1, y][2]
+            count += 1
+    elif y1 == y2:
+        for x in range(min(x1, x2), max(x1, x2)):
+            r += pixels[x, y1][0]
+            g += pixels[x, y1][1]
+            b += pixels[x, y1][2]
+            count += 1
+    else:  # 斜线
+        for x in range(min(x1, x2), max(x1, x2)):
+            y = (y2 - y1) / (x2 - x1) * (x - x1) + y1
+            r += pixels[x, y][0]
+            g += pixels[x, y][1]
+            b += pixels[x, y][2]
+            count += 1
+
+    return r // count, g // count, b // count

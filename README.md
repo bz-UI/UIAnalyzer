@@ -13,12 +13,10 @@ pip install -r requirements.txt
 
 Or directly install with pip
 ```sh
-pip install UIAnalyzer==0.1.2
+pip install UIAnalyzer==0.2.0
 ```
 
 ## Run
-
-Refer to `Example/example.py`
 
 - `PageCognition.py`: The page cognition module, used for drawing SoM and Grid.
 - `Driver.py`: Android driver, supports interactions such as clicking and typing, and can also retrieve XML and take screenshots.
@@ -28,4 +26,4 @@ Refer to `Example/example.py`
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the terms of the GNU General Public License v3.0 - see the [LICENSE](./LICENSE) file for details.

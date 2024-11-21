@@ -14,6 +14,8 @@ class XML:
     """
     def __init__(self, path: str):
         self.xml_save_path = path
+        if not os.path.exists(self.xml_save_path):
+            Driver.get_xml(self.xml_save_path)
         try:
             self.root = self.__get_xml_root()
             if self.root is None:
