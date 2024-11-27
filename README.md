@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 Or directly install with pip
 ```sh
-pip install UIAnalyzer==0.2.0
+pip install UIAnalyzer==0.3.0
 ```
 
 ## Run

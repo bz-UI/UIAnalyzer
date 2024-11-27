@@ -8,7 +8,7 @@ def parse_requirements(filename):
 
 setup(
     name="UIAnalyzer",
-    version="0.2.0",
+    version="0.3.0",
     author="TSKGHS17",
     author_email="23210240317@m.fudan.edu.cn",
     long_description=open("README.md").read(),
