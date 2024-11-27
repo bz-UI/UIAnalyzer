@@ -1,3 +1,5 @@
+import numpy as np
+from PIL import Image
 from typing import List
 
 
@@ -82,3 +84,12 @@ class Rect:
             s2 = (x4 - x3) * (y4 - y3)
             s3 = (x6 - x5) * (y6 - y5)
             return s3 / (s1 + s2 - s3)
+
+    @staticmethod
+    def crop_image(img_path: str, bounds: List) -> np.ndarray | None:
+        with Image.open(img_path) as img:
+            if bounds[0] < 0 or bounds[1] < 0 or bounds[2] > img.size[0] or bounds[3] > img.size[1] or bounds[0] >= bounds[2] or bounds[1] >= bounds[3]:
+                return None
+
+            img = img.crop((bounds[0], bounds[1], bounds[2], bounds[3]))
+            return np.array(img)

@@ -2,3 +2,6 @@ lxml==5.3.0
 Pillow==10.4.0
 opencv-python~=4.10.0.84
 anytree~=2.12.1
+numpy~=2.1.2
+levenshtein~=0.26.1
+easyocr~=1.7.2

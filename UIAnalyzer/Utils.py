@@ -1,5 +1,6 @@
 import subprocess
 import platform
+import Levenshtein
 from typing import Dict, Tuple, List
 from PIL import Image
 
@@ -101,3 +102,11 @@ def get_line_average_color(image_path: str, start_point: List, end_point: List) 
             count += 1
 
     return r // count, g // count, b // count
+
+
+def calculate_levenshtein_similarity(str1, str2):
+    distance = Levenshtein.distance(str1, str2)
+    # 根据编辑距离计算相似度
+    similarity = 1 - (distance / max(len(str1), len(str2)))
+    return similarity
+

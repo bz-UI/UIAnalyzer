@@ -1,3 +1,5 @@
+import os
+
 from UIAnalyzer.PageCognition import PageCognition
 from UIAnalyzer.XML import XML
 from anytree import RenderTree
@@ -13,6 +15,7 @@ if __name__ == "__main__":
     # for pre, _, node in tree:
     #     print(f"{pre},{node.xml_node.attrib}")
 
-    PageCognition.draw_SoM("UIAnalyzer_logs/1.png")
-    PageCognition.grid("UIAnalyzer_logs/1.png")
-
+    for root, _, files in os.walk("UIAnalyzer_logs"):
+        for file in files:
+            if file.endswith(".png"):
+                PageCognition.draw_SoM(os.path.join(root, file), enable_ocr=True)
