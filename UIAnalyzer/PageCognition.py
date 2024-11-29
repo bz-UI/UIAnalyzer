@@ -4,6 +4,7 @@ import easyocr
 from datetime import datetime
 from typing import List, Dict, Tuple, Optional
 from PIL import Image, ImageDraw, ImageFont
+import numpy as np
 
 from .Rect import Rect
 from .XML import XML
@@ -71,6 +72,27 @@ class PageCognition:
 
             return ocr_res
 
+        def filter_rects_by_edge_detection(rects=None) -> List:
+            low_threshold = 50
+            high_threshold = 100
+            edge_presence_threshold = 100
+
+            filtered_rects = []
+            img_cv = cv2.imread(img_path)
+            for rect in rects:
+                bounds = rect['bounds']
+                x1, y1, x2, y2 = int(bounds[0]), int(bounds[1]), int(bounds[2]), int(bounds[3])
+                element_img = img_cv[y1:y2, x1:x2]  # crop target region
+                gray_img = cv2.cvtColor(element_img, cv2.COLOR_BGR2GRAY)
+                edges = cv2.Canny(gray_img, low_threshold, high_threshold)
+                
+                # 检查边缘存在性
+                if np.sum(edges) > edge_presence_threshold:
+                    # 如果边缘存在，则添加到结果列表中
+                    filtered_rects.append(rect)
+
+            return filtered_rects
+            
         # 0. Screenshot if necessary
         if not os.path.exists(img_path):
             Driver.screenshot(img_path)
@@ -87,6 +109,11 @@ class PageCognition:
             rects = filtered_xml_rects + ocr_rects
         else:
             rects = xml_rects
+
+        # 2. Use edge detection to filter rects
+        print(f"before filter rects: {len(rects)}")
+        rects = filter_rects_by_edge_detection(rects=rects)
+        print(f"after filter rects: {len(rects)}")
 
         rects = sorted(rects, key=lambda r: (r['bounds'][1], r['bounds'][0]))
         return PageCognition.__draw_rects(img_path, rects, "SoM")

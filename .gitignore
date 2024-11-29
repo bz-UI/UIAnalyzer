@@ -11,3 +11,7 @@ UIAnalyzer/Example/*.xml
 
 UIAnalyzer_logs
 test_package.py
+
+utils
+temp.py
+data
