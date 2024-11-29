@@ -73,6 +73,8 @@ class PageCognition:
 
         # 0. Screenshot if necessary
         if not os.path.exists(img_path):
+            if not os.path.exists(os.path.dirname(img_path)):
+                os.makedirs(os.path.dirname(img_path))
             Driver.screenshot(img_path)
 
         # 1. Get XML Rects
@@ -160,7 +162,7 @@ class PageCognition:
 
         # save rect info
         if SoM:
-            rect_result_path = os.path.join(directory, f"{name}_{extension_name}.txt")
+            rect_result_path = os.path.join(directory, f"{name}.txt")
             with open(rect_result_path, "w", encoding='utf-8') as f:
                 for key, value in ret_rects.items():
                     f.write(f"{key}: {value}\n")

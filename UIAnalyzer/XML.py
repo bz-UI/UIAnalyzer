@@ -37,7 +37,7 @@ class XML:
             raise Exception(f"Failed to parse XML: {e}")
             
     @staticmethod
-    def __parse_bounds(bounds: Union[str, List]) -> List:
+    def parse_bounds(bounds: Union[str, List]) -> List:
         """
         parse string into tuple
         """
@@ -87,7 +87,7 @@ class XML:
             text = [] if node.xml_node.attrib['text'] == "" else [node.xml_node.attrib['text']]
             content_desc = [] if node.xml_node.attrib['content-desc'] == "" else [node.xml_node.attrib['content-desc']]
             resource_id = [] if node.xml_node.attrib['resource-id'] == "" else [node.xml_node.attrib['resource-id']]
-            bounds = self.__parse_bounds(node.xml_node.attrib['bounds'])
+            bounds = self.parse_bounds(node.xml_node.attrib['bounds'])
             node_descendants = get_descendants(node)
 
             for descendant in node_descendants:
@@ -128,7 +128,7 @@ class XML:
                         group_subtree(node)
             elif is_clickable(node):  # 3. a clickable widget can be grouped by itself
                 attrib = node.xml_node.attrib
-                bounds = self.__parse_bounds(attrib['bounds'])
+                bounds = self.parse_bounds(attrib['bounds'])
                 if bounds:
                     element = {"class": attrib['class'].split('.')[-1], "resource_id": attrib['resource-id'], "text": attrib['text'], "content_desc": attrib['content-desc'], "bounds": bounds}
                     interactive_groups.append({key: value for key, value in element.items() if value not in ("", [])})
