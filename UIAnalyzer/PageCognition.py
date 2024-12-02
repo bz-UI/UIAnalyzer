@@ -73,24 +73,39 @@ class PageCognition:
             return ocr_res
 
         def filter_rects_by_edge_detection(rects=None) -> List:
+            """
+            使用边缘检测过滤矩形框。
+            如果边缘不存在/距离 bounds 较远，则认为被遮挡/实际不存在
+            """
             low_threshold = 50
             high_threshold = 100
             edge_presence_threshold = 100
 
             filtered_rects = []
             img_cv = cv2.imread(img_path)
+
             for rect in rects:
                 bounds = rect['bounds']
                 x1, y1, x2, y2 = int(bounds[0]), int(bounds[1]), int(bounds[2]), int(bounds[3])
-                element_img = img_cv[y1:y2, x1:x2]  # crop target region
+                element_img = img_cv[y1:y2, x1:x2]  # 裁剪目标元素
                 gray_img = cv2.cvtColor(element_img, cv2.COLOR_BGR2GRAY)
                 edges = cv2.Canny(gray_img, low_threshold, high_threshold)
-                
-                # 检查边缘存在性
-                if np.sum(edges) > edge_presence_threshold:
-                    # 如果边缘存在，则添加到结果列表中
-                    filtered_rects.append(rect)
 
+                if np.sum(edges) > edge_presence_threshold:
+                    edge_positions = np.column_stack(np.where(edges > 0))
+                    
+                    # 垂直方向的坐标值从上往下增加。也就是说，y 坐标值越小，位置越靠近图像的顶部。
+                    edge_top = np.min(edge_positions[:, 0])  # 边缘在垂直方向上的最小坐标值。
+                    edge_bottom = np.max(edge_positions[:, 0])  # 边缘在垂直方向上的最大坐标值。
+                    edge_left = np.min(edge_positions[:, 1])  # 边缘在水平方向上的最小坐标值。
+                    edge_right = np.max(edge_positions[:, 1])   # 边缘在水平方向上的最大坐标值。
+
+                    # TODO:
+                    # 如果线条在图像边界上被检测到，并且仅有极少数 pixel 出现在边界上，说明可能存在贯穿元素的线条，则表示该元素被可能被遮挡
+                    # 边缘像素阈值设置为总边缘像素数量的 1%
+                    edge_pixel_threshold = edges.shape[0] * edges.shape[1] * 0.01
+                    
+                filtered_rects.append(rect)
             return filtered_rects
             
         # 0. Screenshot if necessary
