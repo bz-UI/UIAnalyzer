@@ -12,6 +12,8 @@ UIAnalyzer/Example/*.xml
 UIAnalyzer_logs
 test_package.py
 
-utils
+.vscode
+bak
 data
 dataset
+output

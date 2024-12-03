@@ -21,7 +21,7 @@ font_path = os.path.join(script_dir, "Assets", "Arial.ttf")
 
 class PageCognition:
     @staticmethod
-    def draw_SoM(img_path: str, enable_ocr: Optional[bool] = False, lang: Optional[str] = 'ch_sim') -> Tuple[str, Dict]:
+    def draw_SoM(img_path: str, enable_ocr: Optional[bool] = False, enable_edge=False, lang: Optional[str] = 'ch_sim') -> Tuple[str, Dict]:
         def filter_xml_rects() -> List:
             ret_rects = []
             for xml_rect in xml_rects:
@@ -40,6 +40,7 @@ class PageCognition:
                 # If the text in xml_rect is recognized by OCR, add it to ret_rects
                 if 'text' in xml_rect.keys():
                     if ocr_res:  # If there is any OCR result
+                        # 如果xml 有文本，则过滤掉和 OCR 结果相似度低的框
                         if isinstance(xml_rect['text'], str):
                             for ocr_re in ocr_res:
                                 if calculate_levenshtein_similarity(xml_rect['text'], ocr_re['text']) > 0.5:
@@ -87,6 +88,9 @@ class PageCognition:
             for rect in rects:
                 bounds = rect['bounds']
                 x1, y1, x2, y2 = int(bounds[0]), int(bounds[1]), int(bounds[2]), int(bounds[3])
+                width, height = x2 - x1, y2 - y1
+                if width <= 0 or height <= 0:
+                   continue
                 element_img = img_cv[y1:y2, x1:x2]  # 裁剪目标元素
                 gray_img = cv2.cvtColor(element_img, cv2.COLOR_BGR2GRAY)
                 edges = cv2.Canny(gray_img, low_threshold, high_threshold)
@@ -105,7 +109,7 @@ class PageCognition:
                     # 边缘像素阈值设置为总边缘像素数量的 1%
                     edge_pixel_threshold = edges.shape[0] * edges.shape[1] * 0.01
                     
-                filtered_rects.append(rect)
+                    filtered_rects.append(rect)
             return filtered_rects
             
         # 0. Screenshot if necessary
@@ -126,9 +130,11 @@ class PageCognition:
             rects = xml_rects
 
         # 2. Use edge detection to filter rects
-        print(f"before filter rects: {len(rects)}")
-        rects = filter_rects_by_edge_detection(rects=rects)
-        print(f"after filter rects: {len(rects)}")
+        if enable_edge:
+            print(f"before filter rects: {len(rects)}")
+            rects_copy = rects.copy()
+            rects = filter_rects_by_edge_detection(rects=rects_copy)
+            print(f"after filter rects: {len(rects)}")
 
         rects = sorted(rects, key=lambda r: (r['bounds'][1], r['bounds'][0]))
         return PageCognition.__draw_rects(img_path, rects, "SoM")

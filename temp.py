@@ -37,5 +37,11 @@ def get_som(image_num=0, enable_ocr=True):
 
 
 if __name__ == "__main__":
-    get_data()
+    # get_data()
     # get_som(image_num=0, enable_ocr=True)
+    from utils.utils import count_txt_lines_to_excel
+    dir_path = os.path.join("output", "Meituan")
+    excel_path = os.path.join(dir_path, "Meituan.xlsx")
+    count_txt_lines_to_excel(directory=dir_path, excel_path=excel_path)
+
+    pass
