@@ -40,16 +40,22 @@ class PageCognition:
                 if 'text' in xml_rect.keys():
                     if ocr_res:  # If there is any OCR result
                         if isinstance(xml_rect['text'], str):
+                            outer_break = False
                             for ocr_re in ocr_res:
+                                if outer_break:
+                                    break
                                 if calculate_levenshtein_similarity(xml_rect['text'], ocr_re['text']) > 0.5:
                                     ret_rects.append(xml_rect)
-                                    break
+                                    outer_break = True
                         else:
+                            outer_break = False
                             for text in xml_rect['text']:
+                                if outer_break:
+                                    break
                                 for ocr_re in ocr_res:
                                     if calculate_levenshtein_similarity(text, ocr_re['text']) > 0.5 or text in ocr_re['text']:
                                         ret_rects.append(xml_rect)
-                                        break
+                                        outer_break = True
                 else:
                     ret_rects.append(xml_rect)
             return ret_rects
