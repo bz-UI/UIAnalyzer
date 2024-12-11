@@ -132,6 +132,7 @@ class PageCognition:
         ret_rects = dict()
 
         # draw rectangles and text
+        element_index = 1
         for index, rect in enumerate(rects):
             rect_w, rect_h = rect['bounds'][2] - rect['bounds'][0], rect['bounds'][3] - rect['bounds'][1]
             if rect['bounds'][2] >= rect['bounds'][0] and rect['bounds'][3] >= rect['bounds'][1]:
@@ -149,10 +150,11 @@ class PageCognition:
                     else:
                         rect['id_bounds'] = [rect['bounds'][0] + blank, rect['bounds'][1] + blank, rect['bounds'][0] + blank + text_width, rect['bounds'][1] + blank + text_height]
                     draw.rectangle(rect['id_bounds'], fill=(0, 0, 255), width=3)
-                    draw.text((rect['id_bounds'][0], rect['id_bounds'][1]), str(index), fill=(0, 255, 0), font=ImageFont.truetype(font=font_path, size=35))
+                    draw.text((rect['id_bounds'][0], rect['id_bounds'][1]), str(element_index), fill=(0, 255, 0), font=ImageFont.truetype(font=font_path, size=35))
 
                     # save
-                    ret_rects[index] = rect
+                    ret_rects[element_index] = rect
+                    element_index += 1
 
         # save image
         directory, filename = os.path.split(img_path)
