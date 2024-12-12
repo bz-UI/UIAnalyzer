@@ -91,6 +91,8 @@ class PageCognition:
         if enable_ocr:
             ocr = easyocr.Reader([lang, 'en'])
             filtered_xml_rects = filter_xml_rects()  # 2. Use OCR to filter XML Rects
+            if len(xml_rects) <= 5:
+                xml_rects = []
             ocr_rects = get_ocr_rects()  # 3. Add OCR Rects
             rects = filtered_xml_rects + ocr_rects
         else:
