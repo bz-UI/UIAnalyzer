@@ -61,13 +61,16 @@ class PageCognition:
             return ret_rects
 
         def get_ocr_rects() -> List:
-            ocr_results = ocr.readtext(img_path, text_threshold=0.8)
+            h, w = Image.open(img_path).size
+            img_area = h * w
             ocr_res = []
+            ocr_results = ocr.readtext(img_path, text_threshold=0.8)
             for ocr_result in ocr_results:
                 add_ocr = True
                 bounds = [round(ocr_result[0][0][0]), round(ocr_result[0][0][1]), round(ocr_result[0][2][0]), round(ocr_result[0][2][1])]
                 for xml_rect in xml_rects:
-                    if Rect.is_containing(bounds, xml_rect['bounds']) or Rect.intersection_over_second_area(xml_rect['bounds'], bounds) > 0.7:
+                    rect_img_area = (xml_rect['bounds'][2] - xml_rect['bounds'][0]) * (xml_rect['bounds'][3] - xml_rect['bounds'][1])
+                    if (Rect.is_containing(bounds, xml_rect['bounds']) or Rect.intersection_over_second_area(xml_rect['bounds'], bounds) > 0.7) and rect_img_area < img_area / 4:
                         add_ocr = False
                         break
 
@@ -91,8 +94,6 @@ class PageCognition:
         if enable_ocr:
             ocr = easyocr.Reader([lang, 'en'])
             filtered_xml_rects = filter_xml_rects()  # 2. Use OCR to filter XML Rects
-            if len(xml_rects) <= 5:
-                xml_rects = []
             ocr_rects = get_ocr_rects()  # 3. Add OCR Rects
             rects = filtered_xml_rects + ocr_rects
         else:
